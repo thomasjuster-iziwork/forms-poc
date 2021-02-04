@@ -29,7 +29,7 @@ export const applyBusinessRule = <Values extends FormValuesShape>(
   maxIterations = 10,
   count = 1
 ) => {
-  return (previousValues, currentValues) => {
+  return (previousValues: Values, currentValues: Values): Values => {
     if (count > maxIterations) throw new Error("too many iterations");
     const nextValues = businessRule(previousValues, currentValues);
     return nextValues === currentValues

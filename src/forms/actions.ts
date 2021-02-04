@@ -1,4 +1,6 @@
+import { applyBusinessRule } from './helpers'
 import {
+  BusinessRule,
   FormErrors,
   FormField,
   FormState,
@@ -35,18 +37,23 @@ export const initialize = <Values extends FormValuesShape>(
   };
 };
 
+const noopBusinessRule: BusinessRule<any> = (_prev, current) => current;
+
 export const setValues = <Values extends FormValuesShape>(
-  state: FormState<Values>
-) => (values: Values): FormState<Values> => {
+  state: FormState<Values>,
+  businessRule: BusinessRule<Values> = noopBusinessRule,
+) => (values: Partial<Values>): FormState<Values> => {
+  const nextValues = { ...state.values, ...values };
   return {
     ...state,
-    values,
-    errors: harvestErrors(state.fields, values)
+    values: applyBusinessRule(businessRule)(state.values, nextValues),
+    errors: harvestErrors(state.fields, nextValues)
   };
 };
 
 export const setListValue = <Values extends FormValuesShape>(
-  state: FormState<Values>
+  state: FormState<Values>,
+  businessRule: BusinessRule<Values> = noopBusinessRule,
 ) => <Key extends keyof Values>(
   field: Key,
   index: number,
@@ -58,7 +65,7 @@ export const setListValue = <Values extends FormValuesShape>(
 
   return {
     ...state,
-    values: nextValues,
+    values: applyBusinessRule(businessRule)(state.values, nextValues),
     errors: harvestErrors(state.fields, nextValues)
   };
 };

@@ -1,7 +1,7 @@
 export type FormFieldName = string;
 export type FormFieldError = string | null;
 export type FormField<Values> = {
-  domNode: HTMLElement; // needed, it is used to scroll programmatically to field when clicking on error message
+  getDomNode: () => HTMLElement | any; // needed, it is used to scroll programmatically to field when clicking on error message
   name: FormFieldName;
   getError: (values: Values) => FormFieldError;
 };
@@ -18,7 +18,7 @@ export type FormState<Values extends FormValuesShape> = {
 
 export type FormActions<Values extends FormValuesShape> = {
   initialize: (values: Values) => void;
-  setValues: (values: Values) => void;
+  setValues: (values: Partial<Values>) => void;
   setListValue: <Key extends keyof Values>(
     field: Key,
     index: number,
